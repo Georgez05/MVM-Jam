@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.AI;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI2D : MonoBehaviour
 {
     public enum EnemyState { Patrol, Chase, Attack }
 
@@ -10,26 +9,27 @@ public class EnemyAI : MonoBehaviour
     [Header("References")]
     public Transform[] patrolPoints;
     public Transform player;
-    private NavMeshAgent agent;
+    public Rigidbody2D rb;
 
     [Header("Detection Settings")]
     public float detectionRange = 10f;
     public float attackRange = 2f;
     public LayerMask playerLayer;
 
+    [Header("Movement Settings")]
+    public float moveSpeed = 3f;
+
     [Header("Attack Settings")]
     public float attackCooldown = 1.5f;
     private float lastAttackTime;
 
-
     private int currentPatrolIndex;
-    
     public bool playerInSight;
     public bool playerInAttackRange;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody2D>();
         currentPatrolIndex = 0;
         TransitionToState(EnemyState.Patrol);
     }
@@ -42,8 +42,10 @@ public class EnemyAI : MonoBehaviour
 
     void DetectPlayer()
     {
-        playerInSight = Physics.CheckSphere(transform.position, detectionRange, playerLayer);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
+        Vector2 position = transform.position;
+
+        playerInSight = Physics2D.OverlapCircle(position, detectionRange, playerLayer);
+        playerInAttackRange = Physics2D.OverlapCircle(position, attackRange, playerLayer);
     }
 
     void StateHandler()
@@ -76,9 +78,10 @@ public class EnemyAI : MonoBehaviour
     {
         if (patrolPoints.Length == 0) return;
 
-        agent.destination = patrolPoints[currentPatrolIndex].position;
+        Transform targetPoint = patrolPoints[currentPatrolIndex];
+        MoveTowards(targetPoint.position);
 
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        if (Vector2.Distance(transform.position, targetPoint.position) < 0.2f)
         {
             currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
         }
@@ -86,17 +89,23 @@ public class EnemyAI : MonoBehaviour
 
     void Chase()
     {
-        agent.SetDestination(player.position);
+        MoveTowards(player.position);
+    }
+    void MoveTowards(Vector2 target)
+    {
+        Vector2 direction = (target - (Vector2)transform.position).normalized;
+        rb.linearVelocity = new Vector2(direction.x * moveSpeed, rb.linearVelocity.y); // keep vertical velocity (gravity)
     }
 
     void Attack()
     {
-        agent.ResetPath();
-        transform.LookAt(player);
+        rb.linearVelocity = Vector2.zero;
+        Vector2 direction = (player.position - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        rb.rotation = angle;
 
         if (Time.time > lastAttackTime + attackCooldown)
         {
-            // Attack logic here
             Debug.Log("Enemy attacks player!");
             lastAttackTime = Time.time;
         }
