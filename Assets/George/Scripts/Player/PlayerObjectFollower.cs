@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class PlayerObjectFollower : MonoBehaviour
 {
-    public Transform target; // player
+    public Transform playerTransform; // player
     public Vector2 offset;
 
     private void LateUpdate()
     {
-        if (target != null)
-            transform.position = (Vector2)target.position + offset;
+        if (playerTransform != null)
+            transform.position = (Vector2)playerTransform.position + offset;
     }
 }
