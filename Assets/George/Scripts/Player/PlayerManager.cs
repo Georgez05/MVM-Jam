@@ -289,8 +289,40 @@ public class PlayerManager : MonoBehaviour
     private IEnumerator HandleMeleeAttack(float duration)
     {
         attackPoint.gameObject.SetActive(true);
-        yield return new WaitForSeconds(duration);
+        //fade in
+        float fadeTime = 0.05f;
+        float t = 0;
+        while (t < fadeTime)
+        {
+            t += Time.deltaTime;
+            SetSlashAlpha(Mathf.Lerp(0, 1, t / fadeTime));
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(duration - 2 * fadeTime);
+
+        // fade out
+        t = 0;
+        while (t < fadeTime)
+        {
+            t += Time.deltaTime;
+            SetSlashAlpha(Mathf.Lerp(1f, 0f, t / fadeTime));
+            yield return null;
+        }
+
+        SetSlashAlpha(0f);
         attackPoint.gameObject.SetActive(false);
+        attackCoroutine = null;
+    }
+
+    private void SetSlashAlpha(float alpha)
+    {
+        if (attackPoint.GetComponent<SpriteRenderer>() != null)
+        {
+            Color color = attackPoint.GetComponent<SpriteRenderer>().color;
+            color.a = alpha;
+            attackPoint.GetComponent<SpriteRenderer>().color = color;
+        }
     }
     #endregion
 
