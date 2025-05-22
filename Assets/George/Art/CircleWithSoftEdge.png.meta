@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      CircleWithSoftEdge_0: 515174442290509321
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
