@@ -1,0 +1,47 @@
+Main Character.png
+size:342,1029
+filter:Linear,Linear
+pma:true
+body
+bounds:2,2,105,196
+rotate:90
+eye
+bounds:119,135,63,82
+hair head
+bounds:2,719,308,233
+rotate:90
+hair long1
+bounds:245,308,49,194
+hair long2
+bounds:119,219,74,267
+hair long3
+bounds:200,140,43,346
+hair up1
+bounds:237,723,72,59
+hair up2
+bounds:119,111,43,22
+hair1
+bounds:295,233,73,44
+rotate:90
+hair2
+bounds:296,423,41,79
+hair3
+bounds:311,736,16,46
+head
+bounds:2,488,227,229
+leg1
+bounds:200,24,57,134
+rotate:90
+leg2
+bounds:245,180,48,126
+neck
+bounds:295,180,43,51
+skirt1
+bounds:2,109,115,377
+skirt2
+bounds:237,784,98,243
+skirt3
+bounds:200,83,55,140
+rotate:90
+skirt4
+bounds:231,504,98,213
