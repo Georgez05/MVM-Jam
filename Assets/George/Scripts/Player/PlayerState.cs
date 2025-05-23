@@ -80,6 +80,8 @@ public class PlayerJumpState : PlayerState
     public override void Enter()
     {
         player.isJumping = true;
+        player.isJumpCut = false; // preventsstale jump cut from wall jump
+
         // ensures Jump can't be called multiple times from one press
         player.lastPressedJumpTime = 0;
         player.lastOnGroundTime = 0;

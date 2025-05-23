@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerObjectFollower : MonoBehaviour
 {
-    public Transform playerTransform; // player
+    public Transform playerTransform;
     public Vector2 offset;
 
     private void LateUpdate()

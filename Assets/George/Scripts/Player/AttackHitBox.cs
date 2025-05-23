@@ -5,9 +5,10 @@ public class AttackHitBox : MonoBehaviour
     #region Variables
     [SerializeField] private ParticleSystem hitParticlesPrefab;
     #endregion
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        EnemyPlaceholder enemy = collision.GetComponent<EnemyPlaceholder>();
+        EnemyHealthHandler enemy = collision.GetComponent<EnemyHealthHandler>();
         if (enemy != null)
         {
             Vector2 hitDirection = (enemy.transform.position - transform.position).normalized;

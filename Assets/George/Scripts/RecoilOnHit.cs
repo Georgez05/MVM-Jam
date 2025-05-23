@@ -20,15 +20,28 @@ public class RecoilOnHit : MonoBehaviour
     {
         if (((1 << collision.gameObject.layer) & recoilLayers) != 0)
         {
-            ApplyRecoil();
+            ApplyRecoil(collision);
         }
     }
 
-    private void ApplyRecoil()
+    private void ApplyRecoil(Collider2D collision)
     {
-        Vector2 direction = PlayerManager.Instance.isFacingRight ? Vector2.left : Vector2.right;
+        Vector2 playerDirection = PlayerManager.Instance.isFacingRight ? Vector2.left : Vector2.right;
 
+        // apply recoil to the player
         playerRB.linearVelocity = Vector2.zero;
-        playerRB.AddForce(direction.normalized * PlayerManager.Instance.data.recoilForce, ForceMode2D.Impulse);
+        playerRB.AddForce(playerDirection.normalized * PlayerManager.Instance.data.recoilForce, ForceMode2D.Impulse);
+
+        // apply recoil to enemy if it has a rigidbody
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            Rigidbody2D enemyRB = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (enemyRB != null)
+            {
+                Vector2 enemyDirection = -playerDirection;
+                enemyRB.linearVelocity = Vector2.zero;
+                enemyRB.AddForce(enemyDirection.normalized * PlayerManager.Instance.data.recoilForce, ForceMode2D.Impulse);
+            }
+        }
     }
 }

@@ -20,8 +20,13 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Transform RightWallCheckPoint;
     [SerializeField] private Transform LeftWallCheckPoint;
     [SerializeField] private Vector2 WallCheckSize = new Vector2(0.5f, 1f);
-    public Transform attackPoint;
-    [SerializeField] private Vector2 attackSize = new Vector2(1f, 1f);
+    public GameObject horizontalAttackPoint;
+    public GameObject upwardsAttackPoint;
+    public GameObject downwardsAttackPoint;
+    private GameObject attackPoint;
+    [SerializeField] private Vector2 horizontalAttackSize = new Vector2(1f, 1f);
+    [SerializeField] private Vector2 upwardsAttackSize = new Vector2(1f, 1f);
+    [SerializeField] private Vector2 downwardAttackSize = new Vector2(1.5f, 2f);
 
     [Header("Camera Attributes")]
     [SerializeField] private GameObject cameraFollowObject;
@@ -143,8 +148,8 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             HandleJumpInputDown();
 
-        //if (Input.GetKeyUp(KeyCode.Space))
-        //    HandleJumpInputUp();
+        if (Input.GetKeyUp(KeyCode.Space))
+            HandleJumpInputUp();
 
         if (Input.GetKeyDown(KeyCode.Q) && canDash)
             stateMachine.ChangeState(dashState);
@@ -283,12 +288,26 @@ public class PlayerManager : MonoBehaviour
         if (attackCoroutine != null)
             StopCoroutine(attackCoroutine);
 
+        AttackPointHandler();
         attackCoroutine = StartCoroutine(HandleMeleeAttack(duration));
+    }
+
+    private void AttackPointHandler()
+    {
+        // if in air & moveInput.y < 0 Downwards attack
+        if (lastOnGroundTime < 0 && moveInput.y < 0)
+            attackPoint = downwardsAttackPoint;
+        // moveInput.y > 0 Upwards attack
+        else if (moveInput.y > 0)
+            attackPoint = upwardsAttackPoint;
+        // default to horizontal attack
+        else
+            attackPoint = horizontalAttackPoint;
     }
 
     private IEnumerator HandleMeleeAttack(float duration)
     {
-        attackPoint.gameObject.SetActive(true);
+        attackPoint.SetActive(true);
         //fade in
         float fadeTime = 0.05f;
         float t = 0;
@@ -311,7 +330,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         SetSlashAlpha(0f);
-        attackPoint.gameObject.SetActive(false);
+        attackPoint.SetActive(false);
         attackCoroutine = null;
     }
 
@@ -410,30 +429,33 @@ public class PlayerManager : MonoBehaviour
     {
         float targetGravity = gravityScale;
 
-        // higher gravity if player released the jump input or is falling
+        // sliding
         if (isSliding)
             targetGravity = 0;
-        else if (rb.linearVelocityY < 0 && moveInput.y < 0)
-        {
-            // much higher gravity if holding down
-            targetGravity *= data.fastFallGravityMult;
-            // caps maximum fall speed so when falling over large distances player doesn't accelerate to insanely high speeds
-            rb.linearVelocity = new Vector2(rb.linearVelocityX, Mathf.Max(rb.linearVelocityY, -data.maxFastFallSpeed));
-        }
-        else if (isJumpCut)
+        // jump cut
+        else if (isJumpCut && lastWallJumpTime <= -0.15f)
         {
             // higher gravity if jump button released
             targetGravity *= data.jumpCutGravityMult;
             rb.linearVelocity = new Vector2(rb.linearVelocityX, Mathf.Max(rb.linearVelocityY, -data.maxFallSpeed));
         }
+        // is jumping / wall jumping
         else if ((isJumping || isWallJumping || isJumpFalling) && Mathf.Abs(rb.linearVelocityY) < data.jumpHangTimeThreshold)
         {
             targetGravity *= data.jumpHangGravityMult;
         }
+        // fast fall
+        else if (rb.linearVelocityY < 0 && moveInput.y < 0)
+        {
+            targetGravity *= data.fastFallGravityMult;
+            // caps maximum fall speed so when falling over large distances player doesn't accelerate to insanely high speeds
+            rb.linearVelocity = new Vector2(rb.linearVelocityX, Mathf.Max(rb.linearVelocityY, -data.maxFastFallSpeed));
+        }
+        // normal fall
         else if (rb.linearVelocityY < 0)
         {
             // higher gravity if falling
-            targetGravity *= data.fastFallGravityMult;
+            targetGravity *= data.fallGravityMult;
             rb.linearVelocity = new Vector2(rb.linearVelocityX, Mathf.Max(rb.linearVelocityY, -data.maxFallSpeed));
         }
         SetGravityScale(targetGravity);
@@ -442,11 +464,6 @@ public class PlayerManager : MonoBehaviour
 
 
     #region Editor Methods
-    private void OnValidate()
-    {
-        //CalculateDerivedValues();
-    }
-
     private void CalculateDerivedValues()
     {
         gravityStrength = -(2 * data.jumpHeight) / (Mathf.Pow(data.jumpTimeToApex, 2));
@@ -476,7 +493,9 @@ public class PlayerManager : MonoBehaviour
         Gizmos.DrawWireCube(RightWallCheckPoint.position, WallCheckSize);
         Gizmos.DrawWireCube(LeftWallCheckPoint.position, WallCheckSize);
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(attackPoint.position, attackSize);
+        Gizmos.DrawWireCube(horizontalAttackPoint.transform.position, horizontalAttackSize);
+        Gizmos.DrawWireCube(upwardsAttackPoint.transform.position, upwardsAttackSize);
+        Gizmos.DrawWireCube(downwardsAttackPoint.transform.position, downwardAttackSize);
     }
     #endregion
 }

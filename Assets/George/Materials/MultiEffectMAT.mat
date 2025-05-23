@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DamageFlashMAT
+  m_Name: MultiEffectMAT
   m_Shader: {fileID: -6465566751694194690, guid: 44a568384a4433b4995e9e4046823215, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

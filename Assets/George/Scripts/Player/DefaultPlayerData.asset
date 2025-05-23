@@ -20,7 +20,7 @@ MonoBehaviour:
   doConserveMomentum: 1
   jumpHeight: 4.5
   jumpTimeToApex: 0.4
-  jumpCutGravityMult: 3
+  jumpCutGravityMult: 2
   jumpHangGravityMult: 0.5
   jumpHangTimeThreshold: 1
   jumpHangAccelerationMult: 1.25
@@ -35,9 +35,9 @@ MonoBehaviour:
   dashTime: 0.2
   dashCooldown: 0.75
   fallGravityMult: 1.5
-  fastFallGravityMult: 2.5
+  fastFallGravityMult: 3
   maxFallSpeed: 20
-  maxFastFallSpeed: 25
+  maxFastFallSpeed: 35
   coyoteTime: 0.1
   jumpInputBufferTime: 0.1
   attackDamage: 5
