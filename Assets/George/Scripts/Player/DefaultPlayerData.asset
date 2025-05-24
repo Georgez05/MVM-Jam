@@ -40,7 +40,10 @@ MonoBehaviour:
   maxFastFallSpeed: 35
   coyoteTime: 0.1
   jumpInputBufferTime: 0.1
+  maxHealth: 5
   attackDamage: 5
   attackDuration: 0.3
   attackCooldown: 0.5
-  recoilForce: 30
+  recoilForce: 15
+  knockbackForce: 25
+  knockbackDuration: 0.1

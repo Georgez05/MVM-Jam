@@ -46,6 +46,9 @@ public class PlayerData : ScriptableObject
     [Range(0.01f, 0.5f)] public float jumpInputBufferTime;
 
     [Space(20f)]
+    [Header("Health")]
+    public int maxHealth;
+
     [Header("Melee Attack")]
     public float attackDamage;
     public float attackDuration;
@@ -53,4 +56,6 @@ public class PlayerData : ScriptableObject
 
     [Header("Recoil")]
     public float recoilForce;
+    public float knockbackForce;
+    public float knockbackDuration;
 }

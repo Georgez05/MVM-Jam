@@ -1,25 +1,27 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Spine.Unity;
 
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
 
     #region Variables
-
     [Header("Player Data")]
     public PlayerData data;
     public Rigidbody2D rb { get; private set; }
     public Vector2 moveInput;
 
+    [Header("Skeleton Animation")]
+    public GameObject spineGameobject;
 
     [Header("Checks")]
-    public Transform GroundCheckPoint;
-    public Vector2 GroundCheckSize = new Vector2(0.49f, 0.03f);
-    [SerializeField] private Transform RightWallCheckPoint;
-    [SerializeField] private Transform LeftWallCheckPoint;
-    [SerializeField] private Vector2 WallCheckSize = new Vector2(0.5f, 1f);
+    public Transform groundCheckPoint;
+    public Vector2 groundCheckSize = new Vector2(0.49f, 0.03f);
+    [SerializeField] private Transform rightWallCheckPoint;
+    [SerializeField] private Transform leftWallCheckPoint;
+    [SerializeField] private Vector2 wallCheckSize = new Vector2(0.5f, 1f);
     public GameObject horizontalAttackPoint;
     public GameObject upwardsAttackPoint;
     public GameObject downwardsAttackPoint;
@@ -60,11 +62,13 @@ public class PlayerManager : MonoBehaviour
     public float lastDashTime;
     public float lastAttackTime;
     public float lastWallJumpTime;
+    public float lastKnockbackTime;
 
     public int lastWallJumpDirection;
 
     [Header("Layers & Tags")]
-    public LayerMask GroundLayer;
+    public LayerMask groundLayer;
+    public LayerMask hazardAndEnemyLayers;
 
 
     [Header("State Machine Attributes")]
@@ -129,6 +133,7 @@ public class PlayerManager : MonoBehaviour
         lastPressedJumpTime -= Time.deltaTime;
         lastDashTime -= Time.deltaTime;
         lastAttackTime -= Time.deltaTime;
+        lastKnockbackTime -= Time.deltaTime;
 
         // dash cooldown reset
         if (!canDash && lastDashTime <= -data.dashCooldown)
@@ -169,11 +174,15 @@ public class PlayerManager : MonoBehaviour
 
         // State Machine 
         stateMachine.Update();
+
+        // Check for hazards
+        CheckForHazardDamage();
     }
 
 
     private void FixedUpdate()
     {
+        if (lastKnockbackTime > 0) return;
         // handle Run
         if (isWallJumping)
             Run(data.wallJumpRunLerp);
@@ -346,6 +355,59 @@ public class PlayerManager : MonoBehaviour
     #endregion
 
 
+    #region Damage Methods
+    public void TakeDamage(float damageAmount)
+    {
+
+        //Debug.Log("Player took " + damageAmount + " damage");
+
+        // take damage
+
+        // apply damage flash
+        spineGameobject.GetComponent<SpineDamageFlash>().CallDamageFlash();
+
+        // apply damage VFX
+
+        // apply damage SFX
+    }
+
+    private void CheckForHazardDamage()
+    {
+
+        Collider2D hit = Physics2D.OverlapBox(transform.position, new Vector2(3f, 3f), 0, hazardAndEnemyLayers);
+        if (hit)
+        {
+            if (lastKnockbackTime > 0)
+                return;
+
+            lastKnockbackTime = data.knockbackDuration;
+
+            TakeDamage(1);
+            ApplyKnockback(hit);
+        }
+    }
+
+    private void ApplyKnockback(Collider2D hit)
+    {
+        rb.linearVelocity = Vector2.zero;
+        Vector2 playerDirection = isFacingRight ? Vector2.left : Vector2.right;
+
+        if (lastOnGroundTime < 0)
+        {
+            Vector2 knockbackDirection = (Vector2.up * 0.5f).normalized;
+
+            rb.AddForce(knockbackDirection * data.knockbackForce, ForceMode2D.Impulse);
+        }
+        else
+        {
+            Vector2 knockbackDirection = (playerDirection * 1.5f + Vector2.up * 0.5f).normalized;
+
+            rb.AddForce(knockbackDirection * data.knockbackForce, ForceMode2D.Impulse);
+        }
+    }
+    #endregion
+
+
     #region Check Methods
     public void CheckDirectionToFace(bool isMovingRight)
     {
@@ -385,11 +447,11 @@ public class PlayerManager : MonoBehaviour
     private void PerformCollisionChecks()
     {
         // ground check
-        if (Physics2D.OverlapBox(GroundCheckPoint.position, GroundCheckSize, 0, GroundLayer))
+        if (Physics2D.OverlapBox(groundCheckPoint.position, groundCheckSize, 0, groundLayer))
             lastOnGroundTime = data.coyoteTime;
 
-        bool isTouchingRightWall = Physics2D.OverlapBox(RightWallCheckPoint.position, WallCheckSize, 0, GroundLayer);
-        bool isTouchingLeftWall = Physics2D.OverlapBox(LeftWallCheckPoint.position, WallCheckSize, 0, GroundLayer);
+        bool isTouchingRightWall = Physics2D.OverlapBox(rightWallCheckPoint.position, wallCheckSize, 0, groundLayer);
+        bool isTouchingLeftWall = Physics2D.OverlapBox(leftWallCheckPoint.position, wallCheckSize, 0, groundLayer);
 
         if (isTouchingRightWall && !isWallJumping)
             lastOnWallRightTime = data.coyoteTime;
@@ -488,10 +550,10 @@ public class PlayerManager : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(GroundCheckPoint.position, GroundCheckSize);
+        Gizmos.DrawWireCube(groundCheckPoint.position, groundCheckSize);
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(RightWallCheckPoint.position, WallCheckSize);
-        Gizmos.DrawWireCube(LeftWallCheckPoint.position, WallCheckSize);
+        Gizmos.DrawWireCube(rightWallCheckPoint.position, wallCheckSize);
+        Gizmos.DrawWireCube(leftWallCheckPoint.position, wallCheckSize);
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(horizontalAttackPoint.transform.position, horizontalAttackSize);
         Gizmos.DrawWireCube(upwardsAttackPoint.transform.position, upwardsAttackSize);
