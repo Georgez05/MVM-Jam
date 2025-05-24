@@ -54,6 +54,13 @@ public class RecoilOnHit : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             Rigidbody2D enemyRB = collision.gameObject.GetComponent<Rigidbody2D>();
+
+            EnemyAI2D enemyAI = collision.gameObject.GetComponent<EnemyAI2D>();
+            if (enemyAI != null)
+            {
+                enemyAI.Stun(0.1f);
+            }
+
             if (enemyRB != null)
             {
                 // if recoilDirection is vector2.up dont't apply recoil to the enemy

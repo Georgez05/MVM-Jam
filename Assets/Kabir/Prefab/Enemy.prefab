@@ -102,7 +102,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8173370290534876825}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b3a75afaca3d3a4893398f37b572335, type: 3}
+  m_Script: {fileID: 11500000, guid: d58f9e11cf978334ea5d11d75d7a095d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 0
@@ -116,7 +116,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  moveSpeed: 3
+  moveSpeed: 5
   attackCooldown: 1.5
   playerInSight: 0
   playerInAttackRange: 0

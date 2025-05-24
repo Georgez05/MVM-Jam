@@ -771,9 +771,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 82517662234779989, guid: af4583b35017f854094b640d9739779c, type: 3}
+      propertyPath: rb
+      value: 
+      objectReference: {fileID: 777013170}
+    - target: {fileID: 82517662234779989, guid: af4583b35017f854094b640d9739779c, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 1641595290}
+    - target: {fileID: 82517662234779989, guid: af4583b35017f854094b640d9739779c, type: 3}
+      propertyPath: playerLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 82517662234779989, guid: af4583b35017f854094b640d9739779c, type: 3}
+      propertyPath: patrolPoints.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 82517662234779989, guid: af4583b35017f854094b640d9739779c, type: 3}
       propertyPath: 'patrolPoints.Array.data[0]'
       value: 
@@ -828,7 +840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8173370290534876825, guid: af4583b35017f854094b640d9739779c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1565,6 +1577,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!50 &777013170 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 3191053381906263547, guid: af4583b35017f854094b640d9739779c, type: 3}
+  m_PrefabInstance: {fileID: 242197875}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &819268769
 GameObject:
   m_ObjectHideFlags: 0
@@ -2143,7 +2160,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &972702434
 Transform:
   m_ObjectHideFlags: 0
@@ -4516,7 +4533,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 224ff24d97e43de41860c881449c1601, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
   flashMaterial: {fileID: 2100000, guid: c98de0a151824d24ba1bd04729bc736d, type: 2}
   flashDuration: 0.25
 --- !u!1001 &149503593356555165
@@ -4604,6 +4620,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1017241172323792836, guid: 9f796a3dc01879f4386238789ed80cb4, type: 3}
+      propertyPath: m_Size.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1017241172323792836, guid: 9f796a3dc01879f4386238789ed80cb4, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1017241172323792836, guid: 9f796a3dc01879f4386238789ed80cb4, type: 3}
+      propertyPath: m_Offset.y
+      value: 1.3
+      objectReference: {fileID: 0}
     - target: {fileID: 2522526459248753325, guid: 9f796a3dc01879f4386238789ed80cb4, type: 3}
       propertyPath: downwardRecoil
       value: 0

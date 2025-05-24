@@ -356,37 +356,26 @@ public class PlayerManager : MonoBehaviour
 
 
     #region Damage Methods
-    public void TakeDamage(float damageAmount)
+    public void TakeDamage(float damageAmount, Collider2D hit)
     {
+        if (lastKnockbackTime > 0)
+            return;
+        lastKnockbackTime = data.knockbackDuration;
 
-        //Debug.Log("Player took " + damageAmount + " damage");
+        Debug.Log("Player took " + damageAmount + " damage from " + hit.name);
 
         // take damage
 
         // apply damage flash
         spineGameobject.GetComponent<SpineDamageFlash>().CallDamageFlash();
 
+        // apply knockback
+        ApplyKnockback(hit);
+
         // apply damage VFX
 
         // apply damage SFX
     }
-
-    private void CheckForHazardDamage()
-    {
-
-        Collider2D hit = Physics2D.OverlapBox(transform.position, new Vector2(3f, 3f), 0, hazardAndEnemyLayers);
-        if (hit)
-        {
-            if (lastKnockbackTime > 0)
-                return;
-
-            lastKnockbackTime = data.knockbackDuration;
-
-            TakeDamage(1);
-            ApplyKnockback(hit);
-        }
-    }
-
     private void ApplyKnockback(Collider2D hit)
     {
         rb.linearVelocity = Vector2.zero;
@@ -403,6 +392,16 @@ public class PlayerManager : MonoBehaviour
             Vector2 knockbackDirection = (playerDirection * 1.5f + Vector2.up * 0.5f).normalized;
 
             rb.AddForce(knockbackDirection * data.knockbackForce, ForceMode2D.Impulse);
+        }
+    }
+
+    private void CheckForHazardDamage()
+    {
+
+        Collider2D hit = Physics2D.OverlapBox(transform.position, new Vector2(3f, 3f), 0, hazardAndEnemyLayers);
+        if (hit)
+        {
+            TakeDamage(1, hit);
         }
     }
     #endregion

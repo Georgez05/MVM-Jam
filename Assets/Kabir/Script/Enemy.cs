@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class EnemyAI2D : MonoBehaviour
 {
+    #region Variables
     public enum EnemyState { Patrol, Chase, Attack }
 
     public EnemyState currentState;
@@ -27,6 +28,11 @@ public class EnemyAI2D : MonoBehaviour
     public bool playerInSight;
     public bool playerInAttackRange;
 
+    [Header("Stun")]
+    private float stunDuration = 0.1f;
+    private float stunTimer = 0f;
+    #endregion
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -36,6 +42,14 @@ public class EnemyAI2D : MonoBehaviour
 
     void Update()
     {
+        #region Timers
+        if (stunTimer > 0)
+        {
+            stunTimer -= Time.deltaTime;
+            return;
+        }
+        #endregion
+
         DetectPlayer();
         StateHandler();
     }
@@ -106,7 +120,7 @@ public class EnemyAI2D : MonoBehaviour
 
         if (Time.time > lastAttackTime + attackCooldown)
         {
-            Debug.Log("Enemy attacks player!");
+            PlayerManager.Instance.TakeDamage(1f, gameObject.GetComponent<Collider2D>());
             lastAttackTime = Time.time;
         }
     }
@@ -116,6 +130,14 @@ public class EnemyAI2D : MonoBehaviour
         currentState = newState;
     }
 
+    #region Stun Functions
+    public void Stun(float duration)
+    {
+        stunTimer = duration;
+    }
+    #endregion
+
+    #region Editor
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -124,4 +146,5 @@ public class EnemyAI2D : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
+    #endregion
 }
